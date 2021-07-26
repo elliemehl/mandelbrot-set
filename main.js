@@ -87,7 +87,7 @@ async function main() {
 
         job.public.name = 'mandelbrot set, nodejs';
 
-        job.computeGroups = [{ joinKey: "aitf", joinSecret: "9YDEXdihud" }] 
+        job.computeGroups = [{ joinKey: "", joinSecret: "" }] 
         const ks = await wallet.get(); /* usually loads ~/.dcp/default.keystore */
         job.setPaymentAccountKeystore(ks);
         const results = await job.exec(); //compute.marketValue
@@ -117,8 +117,8 @@ async function main() {
 }
 
 /* Initialize DCP Client and run main() */
-// require('dcp-client')
-// .initSync(SCHEDULER_URL)
+ require('dcp-client')
+ .initSync(SCHEDULER_URL)
 main()
     // .catch(console.error)
     // .finally(() => {console.log("came here")})
