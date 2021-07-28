@@ -108,7 +108,7 @@ function work_function(pre_frame, canvas_size, max_iterations, frames_per_worker
     let mandelbrot = require('./mandelbrot-set');
 
     let frames = mandelbrot.make_frames(pre_frame, canvas_size, max_iterations, frames_per_worker);
-
+/*
     function _arrayBufferToBase64( buffer ) {
         var binary = '';
         var bytes = new Uint8Array( buffer );
@@ -120,7 +120,7 @@ function work_function(pre_frame, canvas_size, max_iterations, frames_per_worker
     }
 
     frames = _arrayBufferToBase64(frames);
-
+*/
     return frames;
 }
 
