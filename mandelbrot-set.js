@@ -80,6 +80,8 @@ function make_frame(canvas_size, complex_coordinates, max_iterations) {
 
     let lower_left_deltas = complex_coordinates_to_features(complex_coordinates, canvas_size)
 
+    let progress_mod = Math.floor(rows / 5);
+ 
     for (let y = 0; y < rows; y++) {
         for (let x = 0; x < cols; x++) {
             let z = coordinates_to_complex(x, y, lower_left_deltas);
@@ -87,10 +89,9 @@ function make_frame(canvas_size, complex_coordinates, max_iterations) {
             let colours = escape_time_to_colour(current_escape_time, max_iterations);
             frame.set(colours, 3 * (y * cols + x));
         }
-        //if (y % 4 == 0){
-          //  progress();
-        //}
-        // progress();
+        if (typeof progress == 'function' && y % progress_mod == 0){
+            progress();
+        }
     }
     
     return frame
@@ -98,14 +99,17 @@ function make_frame(canvas_size, complex_coordinates, max_iterations) {
 
 /**
  * For every frame each worker will calculate the complex coordinates for that frame and then make that frame by calling the make_frame function. Frames will be an array of matrices where each entry of the matrix is the color of the point. 
+ * @param {int[]} [ first_complex_coordinates, last_complex_coordinates ]
  * @param {int} canvas_size 
  * @param {int} max_iterations 
- * @param {int} first_complex_coordinates 
- * @param {int} last_complex_coordinates 
  * @param {int} total_frames 
  * @returns frames
  */
-function make_frames(canvas_size, max_iterations, first_complex_coordinates, last_complex_coordinates, total_frames) {
+function make_frames(complex_coordinates, canvas_size, max_iterations, total_frames) {
+
+    first_complex_coordinates = complex_coordinates[0]
+    last_complex_coordinates = complex_coordinates[1]
+
     const rows = canvas_size.height
     const cols = canvas_size.width
     const frame_size = rows * cols * 3
@@ -116,9 +120,23 @@ function make_frames(canvas_size, max_iterations, first_complex_coordinates, las
         let current_complex_coordinates = kth_complex_coordinate(first_complex_coordinates, last_complex_coordinates, total_frames, k);
         let current_frame = make_frame(canvas_size, current_complex_coordinates, max_iterations);
         frames.set(current_frame, k * frame_size);
-        //progress();
     }
+ 
+    if (typeof progress == 'function'){
+ 
+        function _arrayBufferToBase64( buffer ) {
+            var binary = '';
+            var bytes = new Uint8Array( buffer );
+            var len = bytes.byteLength;
+            for (var i = 0; i < len; i++) {
+                binary += String.fromCharCode( bytes[ i ] );
+            }
+            return btoa( binary );
+        }
 
+        frames = _arrayBufferToBase64(frames);
+    }
+ 
     return frames
 }
 
