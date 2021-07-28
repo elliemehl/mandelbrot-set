@@ -21,6 +21,8 @@ async function save_image(frame, width, height, folder, name) {
     }
 
   });
+
+  if (!fs.existsSync(folder)) fs.mkdirSync(folder);
   await image.toFile(folder + name)
   return image
 }
